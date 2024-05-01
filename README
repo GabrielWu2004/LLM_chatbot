@@ -1,4 +1,4 @@
-# AI Chatbot from Scratch #
+# AI Chatbot from Scratch
 
 This is an on-going project to train an AI assistant chatbot from scratch using only PyTorch. The purpose of the project is to develop a deeper understanding of LLM training paradigm, including data processing, tokenization, model creation, pre-training, and finetuning. I aim to create a model that's comparable to GPT2 in size, and finetune it to become an assistant chatbot with different persona with different LORA modules.
 
