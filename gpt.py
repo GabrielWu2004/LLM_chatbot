@@ -138,7 +138,7 @@ class Block(nn.Module):
         return x
 
 # model
-class BigramLanguageModel(nn.Module):
+class TransformerModel(nn.Module):
 
     def __init__(self):
         super().__init__()
@@ -147,6 +147,15 @@ class BigramLanguageModel(nn.Module):
         self.blocks = nn.Sequential(*[Block(n_embd, n_head=n_head) for _ in range(n_layer)])
         self.ln_f = nn.LayerNorm(n_embd) # final layer norm
         self.lm_head = nn.Linear(n_embd, vocab_size)
+        self.apply(self._init_weights)
+    
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+            if module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
     
     def forward(self, idx, targets=None):
         # idx (B, T) (batch size, sentence length)
@@ -188,8 +197,9 @@ class BigramLanguageModel(nn.Module):
             idx = torch.cat((idx, idx_next), dim=1) # (B, T+1), will end of generating max_new_tokens number of tokens
         return idx
 
-model = BigramLanguageModel()
+model = TransformerModel()
 m = model.to(device)
+print(sum(p.numel() for p in m.parameters())/1e6, 'M parameters')
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
